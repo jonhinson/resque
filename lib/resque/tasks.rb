@@ -25,21 +25,21 @@ namespace :resque do
     end
     
 
-    begin
-      worker = Resque::Worker.new(*queues)
-      worker.verbose = ENV['LOGGING'] || ENV['VERBOSE']
-      worker.very_verbose = ENV['VVERBOSE']
-    rescue Resque::NoQueueError
-      abort "set QUEUE env var, e.g. $ QUEUE=critical,high rake resque:work"
-    end
-
-    if ENV['PIDFILE']
-      File.open(ENV['PIDFILE'], 'w') { |f| f << worker.pid }
-    end
-
-    worker.log "Starting worker #{worker}"
-
-    worker.work(ENV['INTERVAL'] || 5) # interval, will block
+    # begin
+    #       worker = Resque::Worker.new(*queues)
+    #       worker.verbose = ENV['LOGGING'] || ENV['VERBOSE']
+    #       worker.very_verbose = ENV['VVERBOSE']
+    #     rescue Resque::NoQueueError
+    #       abort "set QUEUE env var, e.g. $ QUEUE=critical,high rake resque:work"
+    #     end
+    # 
+    #     if ENV['PIDFILE']
+    #       File.open(ENV['PIDFILE'], 'w') { |f| f << worker.pid }
+    #     end
+    # 
+    #     worker.log "Starting worker #{worker}"
+    # 
+    #     worker.work(ENV['INTERVAL'] || 5) # interval, will block
   end
 
   desc "Start multiple Resque workers. Should only be used in dev mode."
