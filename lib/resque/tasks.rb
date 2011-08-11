@@ -12,15 +12,15 @@ namespace :resque do
     
     
     STDOUT.sync = true
-    puts "Starting up"
+    puts "Starting up at work"
 
     trap('TERM') do
-      puts "Graceful shutdown"
+      puts "Graceful shutdown at work"
       exit
     end
 
     loop do
-      puts "Pretending to do work"
+      puts "Pretending to do work at work"
       sleep 3
     end
     
