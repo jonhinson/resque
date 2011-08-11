@@ -6,9 +6,9 @@ namespace :resque do
 
   desc "Start a Resque worker"
   task :work => :setup do
-    require 'resque'
+    #require 'resque'
 
-    queues = (ENV['QUEUES'] || ENV['QUEUE']).to_s.split(',')
+   # queues = (ENV['QUEUES'] || ENV['QUEUE']).to_s.split(',')
     
     
     STDOUT.sync = true
