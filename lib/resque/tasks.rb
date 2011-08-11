@@ -6,40 +6,26 @@ namespace :resque do
 
   desc "Start a Resque worker"
   task :work => :setup do
-    #require 'resque'
+    require 'resque'
 
-   # queues = (ENV['QUEUES'] || ENV['QUEUE']).to_s.split(',')
-    
-    
-    STDOUT.sync = true
-    puts "Starting up at work"
+    #queues = (ENV['QUEUES'] || ENV['QUEUE']).to_s.split(',')
+    queues = '*'
 
-    trap('TERM') do
-      puts "Graceful shutdown at work"
-      exit
+    begin
+      worker = Resque::Worker.new(*queues)
+      worker.verbose = ENV['LOGGING'] || ENV['VERBOSE']
+      worker.very_verbose = ENV['VVERBOSE']
+    rescue Resque::NoQueueError
+      abort "set QUEUE env var, e.g. $ QUEUE=critical,high rake resque:work"
     end
 
-    loop do
-      puts "Pretending to do work at work"
-      sleep 3
+    if ENV['PIDFILE']
+      File.open(ENV['PIDFILE'], 'w') { |f| f << worker.pid }
     end
-    
 
-    # begin
-    #       worker = Resque::Worker.new(*queues)
-    #       worker.verbose = ENV['LOGGING'] || ENV['VERBOSE']
-    #       worker.very_verbose = ENV['VVERBOSE']
-    #     rescue Resque::NoQueueError
-    #       abort "set QUEUE env var, e.g. $ QUEUE=critical,high rake resque:work"
-    #     end
-    # 
-    #     if ENV['PIDFILE']
-    #       File.open(ENV['PIDFILE'], 'w') { |f| f << worker.pid }
-    #     end
-    # 
-    #     worker.log "Starting worker #{worker}"
-    # 
-    #     worker.work(ENV['INTERVAL'] || 5) # interval, will block
+    worker.log "Starting worker #{worker}"
+
+    worker.work(ENV['INTERVAL'] || 5) # interval, will block
   end
 
   desc "Start multiple Resque workers. Should only be used in dev mode."
