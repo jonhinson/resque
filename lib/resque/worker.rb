@@ -111,6 +111,7 @@ module Resque
     def work(interval = 5.0, &block)
       interval = Float(interval)
       $0 = "resque: Starting"
+      puts "<< Calling startup"
       startup
 
       loop do
@@ -224,7 +225,9 @@ module Resque
     # Runs all the methods needed when a worker begins its lifecycle.
     def startup
       enable_gc_optimizations
+      puts "<< startup. registering signal handlers"
       register_signal_handlers
+      puts "<< startup. finish registering signal"
       prune_dead_workers
       run_hook :before_first_fork
       register_worker
@@ -251,7 +254,10 @@ module Resque
     # USR2: Don't process any new jobs
     # CONT: Start processing jobs again after a USR2
     def register_signal_handlers
-      trap('TERM') { shutdown!  }
+      trap('TERM') do 
+        puts "<< Caught Signal term"
+        shutdown!  
+      end
       trap('INT')  { shutdown!  }
 
       begin
